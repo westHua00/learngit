@@ -1,0 +1,160 @@
+1.进入根目录
+$ mkdir learngit  创建空目录
+$ cd learngit	  进入空目录
+$ git init	  把目录变成Git可以管理的仓库
+
+2.
+$ git add readme.txt  把文件添加到暂存区 //可多次添加 最后再一起提交
+$ git commit -m "本次提交的说明"  把暂存区的所有内容提交到当前分支
+
+3.文件修改后
+
+$ git status  仓库当前的状态
+$ git diff readme.txt 查看修改了什么
+
+再次提交 用2
+
+
+4.文件还原
+
+$ git log 查看历史记录  $ git log --pretty=oneline 不会显示作者时间
+
+$ git reset --hard HEAD^   回退到上一版 HEAD表示当前版本 上一个版本就是HEAD^ 上100个版本HEAD~100(commit 之后)
+		如果要到其他版, 把HEAD^ 替换为对应的 commit的前几位
+		用$ git reflog 查询commit
+
+
+$ git checkout -- readme.txt 用版本库里的版本替换工作区的版本(add 之前)
+
+$ git reset HEAD readme.txt 丢弃暂存区的修改,重新放回工作区  再用上条 (add 之后)
+
+5.删除
+$ rm test.txt 删除某文件(如果是误删 用$ git checkout -- test.txt 恢复)
+  从版本库中删除该文件
+	$ git rm test.txt
+	$ git commit -m "remove test.txt"
+
+6.远程库
+本地的仓库下运行命令：
+$ git remote add origin git@github.com:westHua00/learngit.git 关联远程库 origin为库名可改
+$ git push -u origin master  把当前分支master推送到远程
+本地提交后用 $ git push origin master 即可推送修改
+
+克隆
+创建一个新的仓库 勾选Initialize this repository with a README
+$ git clone git@github.com:westHua00/gitskills.git 克隆一个本地库   可以改变地址
+
+7.分支
+ $ git branch 查看当前分支 当前分支前面会标一个*号。
+
+创建与合并分支 
+ $ git branch dev   创建 dev分支
+ $ git checkout dev 切换 到dev分支
+ 可以用 $ git checkout -b dev 代替
+ 在dev上做修改 并 add commit
+
+
+
+ $ git checkout master 切回master分支
+
+ $ git merge dev 合并指定分支到当前分支 
+ $ git branch -d dev 删除dev分支
+
+解决冲突
+ $ git checkout -b feature1 创建并切换到新分支
+ 修改并add commit
+
+$ git checkout master 切回master分支
+ 修改并add commit
+
+$ git merge feature1  合并产生冲突
+$ git status 查看冲突的文件
+也可直接查看readme.txt的内容 Git用<<<<<<<，=======，>>>>>>>标记出不同分支的内容
+
+手动修改冲突 
+再
+$ git add readme.txt 
+$ git commit -m "conflict fixed"
+
+$ git branch -d feature1  删除分支
+
+
+合并分支时，$ git merge --no-ff -m "merge with no-ff" dev
+加上--no-ff 普通模式合并，合并后的历史有分支，能看出来曾经做过合并 $ git log 查看
+	Fast forward模式，删除分支后，会丢掉分支信息
+
+
+Bug分支
+  当前在dev分支时要修改bug
+    $ git stash 把当前工作现场“储藏”起来   $ git stash list可查看stash内容
+  假如bug在master分支上
+    $ git checkout master  切换到master
+    $ git checkout -b issue-101  创建临时分支
+    修复bug后
+    $ git add readme.txt 
+    $ git commit -m "fix bug 101"
+
+    $ git checkout master  
+    $ git merge --no-ff -m "merged bug fix 101" issue-101  合并
+    $ git branch -d issue-101  删除
+  回到dev分支
+    $ git checkout dev
+   恢复工作现场
+    $ git stash pop 会同时删除stash
+   或者$ git stash apply恢复 $ git stash drop 删除stash
+
+删除未合并分支
+   $ git branch -D fenzhi1 
+
+
+
+查看远程库信息 
+  $ git remote -v
+ 
+推送分支
+  $ git push origin master  推送本地的master分支
+ 提交有冲突 推送失败
+  $ git branch --set-upstream-to <branch-name> origin/<branch-name>创建本地分支和远程分支的链接关系
+  $ git pull  把最新的提交抓下来
+   再本地合并解决冲突
+   再推送
+
+
+$ git rebase
+只对尚未推送的本地修改执行变基操作清理历史；
+从不对已推送至别处的提交执行变基操作
+
+
+8.标签 指向某个commit的指针
+$ git checkout master  切换到要打标签的分支
+$ git tag v1.0   标签为v1.0
+  $ git tag -a v0.1 -m "version 0.1 released" 1094adb
+	-a指定标签名，-m指定说明文字
+也可按commit($ git log查询)添加 $ git tag v0.9 f52c633
+
+$ git show v0.9 查看标签信息
+
+$ git tag -d v0.1 删除标签
+  删除远程标签: 再加一步 $ git push origin :refs/tags/v0.9
+
+$ git push origin v1.0 推送标签到远程
+  $ git push origin --tags 推送全部未推送的标签
+
+9.参与一个开源项目
+ 如访问bootstrap项目主页 点“Fork”就在自己的账号下克隆了一个bootstrap仓库
+ $ git clone git@github.com:westHua00/bootstrap.git
+ 推送pull request给贡献代码
+
+10.使用码云
+ 上传自己的SSH公钥 在码云上创建一个新的项目
+ 进入本地库
+ $ git remote add origin git@gitee.com:用户名/learngit.git  可改库名
+ $ git push
+ $ git pull
+
+删除已有的远程库 如库名为origin
+   $ git remote rm origin
+
+11.忽略某些文件时，需要编写.gitignore  https://github.com/github/gitignore
+ 
+ 
